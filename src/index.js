@@ -6,11 +6,13 @@ dotenv.config()
 
 
 import usersRouters from "./routes/users.routes.js"
+import transationsRouter from "./routes/transations.routes.js";
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(usersRouters);
+app.use(transationsRouter);
 
 
 export const userSchema = joi.object({
@@ -20,10 +22,10 @@ export const userSchema = joi.object({
     passwordConfirmation:joi.number().required().min(3),
 });
 
-export const transationSchema = joi.object({
+/* export const transationSchema = joi.object({
     type:joi.string().required(),
     value:joi.number().required(),
 })
-
+ */
 
 app.listen(5000, () => console.log("Porta 5k rodando"));

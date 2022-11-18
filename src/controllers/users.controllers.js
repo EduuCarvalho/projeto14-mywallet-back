@@ -1,16 +1,24 @@
 
 import { userSchema } from '../index.js';
-import { usersCollection } from '../database/db.js';
+import { usersCollection, sessionCollection} from '../database/db.js';
+import { v4 as uuidV4 } from "uuid"
+import bcrypt from 'bcrypt';
+
+
+
 
 
 export async function postSignUp (req,res) {
-    const {name, email, password, passwordConfirmation} = req.body;
+    const {name, email, password,passwordConfirmation} = req.body;
         
         if(password !== passwordConfirmation){
             res.send("As senhas não são iguais!!!").sendStatus(409);
         }
+
+        const passwordHash = bcrypt.hashSync(password, 10);
+
    
-        const { error } = userSchema.validate({name, email, password, passwordConfirmation},{abortEarly:false});
+        const { error } = userSchema.validate({name, email, password,passwordConfirmation},{abortEarly:false});
 
         if (error){
             const errors = error.details.map((detail)=> detail.message);
@@ -26,9 +34,9 @@ export async function postSignUp (req,res) {
         await usersCollection.insertOne({
             name,
             email,
-            password,
+            password:passwordHash,
         });
-        res.sendStatus(200)
+        res.sendStatus(201)
     } catch (err) {
         console.log(err);
         res.sendStatus(500);
@@ -36,25 +44,43 @@ export async function postSignUp (req,res) {
 
 }
 
-export async function getUsers(req,res){
-    const {user} = req.headers;
+export async function postSignIn (req,res) {
+    const { email, password} = req.body;
+    const token = uuidV4();
 
-    try{
-        const users = await usersCollection
-        .find({
-            $or:[
-                {name:user},
-                {email:user},    
-            ],
-        })
-        .toArray();
+    const user = await usersCollection.findOne({email});
 
-        if (users.length === 0 ){
-            return res.status(404).send("Não foi encontrado nenhum usuário");
-        }
-        res.send(users);
-    }catch (err){
-        console.log(err);
+console.log(user.password)
+console.log(password)
+    if(user && bcrypt.compareSync(password, user.password)) {
+      
+        await sessionCollection.insertOne({
+            token,
+            userId: user._id,
+         
+        });
+        res.send(token)
+    } else {
+        res.send("Usuário não encontrado,favor conferir e-mail e senha!!!")
+    }
+
+}
+
+export async function keepLogIn (req,res){
+    const { authorization } = req.headers;
+    const token = authorization?.replace("Bearer ", "");
+    if (!token) {
+        return res.sendStatus(401);
+    }
+
+    try {
+        const sessions = await sessionCollection.findOne({token})
+        console.log(sessions);
+        const user = await usersCollection.findOne({_id: sessions?.userId})
+        delete user.password;
+
+        res.send(user)
+    }catch (err) {
         res.sendStatus(500)
     }
 }
