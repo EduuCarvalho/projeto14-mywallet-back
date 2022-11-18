@@ -1,40 +1,29 @@
 import express from 'express';
 import joi from 'joi';
-import { MongoClient } from 'mongodb';
-
+import cors from 'cors';
 import dotenv from 'dotenv';
 dotenv.config()
 
 
 import {
-    postSignUp
+    postSignUp,
+    getUsers,
 } from "./controllers/users.controllers.js"
 
 const app = express();
 app.use(express.json());
-
-const mongoClient = new MongoClient("mongodb://localhost:27017");
-
-
-try {
-    await mongoClient.connect();
-    console.log("mongodb conectado");
-} catch (err){
-    console.log("error no mongo db", err)
-}
-
-const db = mongoClient.db("myWallet");
-
-export const usersCollection = db.collection("users");
+app.use(cors());
 
 
 export const userSchema = joi.object({
-    name: joi.string().required(2),
-    email: joi.email().required().min(3),
-    password:joi.passwrd().required().min(3),
+    name: joi.string().required(),
+    email: joi.string().required().min(3),
+    password:joi.number().required().min(3),
+    passwordConfirmation:joi.number().required().min(3),
 });
 
 
-app.post("signup", postSignUp);
+app.post("/signup", postSignUp);
+app.get("/signup", getUsers);
 
 app.listen(5000, () => console.log("Porta 5k rodando"));
