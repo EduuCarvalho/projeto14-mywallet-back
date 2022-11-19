@@ -1,11 +1,6 @@
-
-import { userSchema } from '../index.js';
 import { usersCollection, sessionCollection} from '../database/db.js';
 import { v4 as uuidV4 } from "uuid"
 import bcrypt from 'bcrypt';
-
-
-
 
 
 export async function postSignUp (req,res) {
@@ -17,13 +12,6 @@ export async function postSignUp (req,res) {
 
         const passwordHash = bcrypt.hashSync(password, 10);
 
-   
-        const { error } = userSchema.validate({name, email, password,passwordConfirmation},{abortEarly:false});
-
-        if (error){
-            const errors = error.details.map((detail)=> detail.message);
-            return res.status(422).send(errors);
-        }
         try {
             const userExist = await usersCollection.findOne({email});
             if (userExist){

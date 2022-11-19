@@ -22,10 +22,11 @@ export const userSchema = joi.object({
     passwordConfirmation:joi.number().required().min(3),
 });
 
-/* export const transationSchema = joi.object({
-    type:joi.string().required(),
-    value:joi.number().required(),
+export const transationSchema = joi.object({
+    type:joi.string().required(), //entrada ou saida
+    value:joi.number().required(), 
+    name:joi.string().required(),
 })
- */
+
 
 app.listen(5000, () => console.log("Porta 5k rodando"));
