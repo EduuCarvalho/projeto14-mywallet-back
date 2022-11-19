@@ -1,11 +1,12 @@
-import { postTransations } from "../controllers/transations.controllers.js";
+import { postTransations, getTransations } from "../controllers/transations.controllers.js";
 import { schemaTransationValidation } from "../middlewares/schemaTransationsValidation.js";
 
 import { Router } from "express";
 
 const router = Router();
 
-router.post("/transations",schemaTransationValidation, postTransations);
+router.post("/addtransation",schemaTransationValidation, postTransations);
+router.get("/transations",getTransations);
 
 export default router;
 

@@ -25,7 +25,7 @@ export const userSchema = joi.object({
 export const transationSchema = joi.object({
     type:joi.string().required(), //entrada ou saida
     value:joi.number().required(), 
-    name:joi.string().required(),
+    description:joi.string().required(),
 })
 
 
