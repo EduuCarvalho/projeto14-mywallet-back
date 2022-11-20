@@ -47,7 +47,10 @@ console.log(password)
             userId: user._id,
          
         });
-        res.send(token)
+     const userObj =  await usersCollection.findOne({email});
+     const name = userObj.name
+     
+        res.send({token,name})
     } else {
         res.status(404).send("Usuário não encontrado,favor conferir e-mail e senha!!!")
     }
