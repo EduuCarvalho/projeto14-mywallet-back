@@ -49,7 +49,7 @@ console.log(password)
         });
         res.send(token)
     } else {
-        res.send("Usuário não encontrado,favor conferir e-mail e senha!!!")
+        res.status(404).send("Usuário não encontrado,favor conferir e-mail e senha!!!")
     }
 
 }
