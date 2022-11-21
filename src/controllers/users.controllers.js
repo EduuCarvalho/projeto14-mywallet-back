@@ -7,7 +7,7 @@ export async function postSignUp (req,res) {
     const {name, email, password,passwordConfirmation} = req.body;
         
         if(password !== passwordConfirmation){
-            res.send("As senhas não são iguais!!!").sendStatus(409);
+           return res.status(409).send("As senhas não são iguais!!!");
         }
 
         const passwordHash = bcrypt.hashSync(password, 10);
@@ -24,7 +24,7 @@ export async function postSignUp (req,res) {
             email,
             password:passwordHash,
         });
-        res.sendStatus(201)
+        res.status(201).send("Cadastro feito com sucesso!!!")
     } catch (err) {
         console.log(err);
         res.sendStatus(500);
