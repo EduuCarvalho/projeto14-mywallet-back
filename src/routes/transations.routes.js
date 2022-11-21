@@ -5,7 +5,7 @@ import { Router } from "express";
 
 const router = Router();
 
-router.post("/addtransation",schemaTransationValidation, postTransations);
+router.post("/addtransaction",schemaTransationValidation, postTransations);
 router.get("/transations",getTransations);
 
 export default router;
